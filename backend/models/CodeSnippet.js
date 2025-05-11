@@ -5,9 +5,13 @@ const CodeSnippetSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  language: {
+    type: String,
+    required: true
+  },
   detectedSmells: {
-    type: [String],
-    default: [],
+    type: Object,
+    default: {},
   },
   createdAt: {
     type: Date,

@@ -1,26 +1,33 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const connectMongo = require("../backend/config/db");
+const codeRoutes = require("../backend/routes/codeRoutes");
 
+// initialize app + connect DB
 const app = express();
+connectMongo();
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({
+  origin: "*", // for testing; restrict to frontend domain in production
+  methods: ["GET", "POST", "DELETE"],
+  allowedHeaders: ["Content-Type"]
+}));
+app.use(express.json());
 
 
+// define router for this route
+app.use("/api", codeRoutes);
 
 // Basic route for testing
 app.get("/", (req, res) => {
+  // repalce with a landing page
   res.send("Hello from the backend!");
 });
 
-// Routes for handling code snippets
-const codeRoutes = require("./routes/code");
-app.use("/api/code", codeRoutes);
 
 // Start server
-app.listen(5050, () => {
-  console.log("Server running on port 5000");
+const port = process.env.SERVER_PORT;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });

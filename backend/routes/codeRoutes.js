@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const CodeSnippet = require("../controllers/codeController");
+const codeController = require("../controllers/codeController")
 
 router.get("/code-smell-detector/history", codeController.getCodeHistory);
 
-router.post("/code-smell-detector/code", codeController.createCode);
+router.post("/code-smell-detector/analyze", codeController.analyzeCode);
 
-router.delete("/code-smell-detector/history/:snippetID", codeController.deleteCode);
+router.get("/code-smell-detector/history/:snippetID", codeController.getCodeHistoryByID);
+
+router.delete("/code-smell-detector/history/delete/:snippetID", codeController.deleteCodeSnippet);
+
 
 module.exports = router;
 
