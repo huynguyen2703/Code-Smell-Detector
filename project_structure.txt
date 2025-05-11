@@ -1,0 +1,62 @@
+code-smell-detector/
+│
+├── backend/                      # Node.js + Express API
+│   ├── controllers/              # Logic to handle incoming requests
+│   ├── services/                 # Business logic (calls ML APIs, etc.)
+│   ├── models/                   # Mongoose models (MongoDB schemas)
+│   ├── routes/                   # API endpoints (e.g. /api/smells)
+│   ├── middlewares/             # Auth, error handling, etc.
+│   ├── utils/                    # Helpers: file parsers, validators
+│   ├── config/                   # DB, environment configs
+│   ├── uploads/                  # Temporarily store uploaded code files
+│   ├── app.js                    # Express app setup
+│   └── server.js                 # Server startup
+│
+├── frontend/                     # Optional - lightweight client (Next.js or React)
+│   └── (your client app files)
+│
+├── deepsapi/                       # Python API for ML model
+│   ├── app/                      # Core application logic
+│   │   ├── model.py              # Load + run your trained DL model
+│   │   ├── processor.py          # Extract features from code
+│   │   └── utils.py              # Text cleaning, formatting, etc.
+│   ├── main.py                   # FastAPI/Flask entrypoint
+│   ├── requirements.txt
+│   └── Dockerfile                # Containerize the ML service
+│
+├── scripts/                      # Dev scripts: seed data, tests
+│
+├── .env                          # Environment variables
+├── .gitignore
+├── package.json
+├── README.md
+└── docker-compose.yml           # Optional: spin up backend + ML API + DB
+
+
+Higher Overview of backend structure
+backend/
+├── controllers/
+│   └── smellController.js         # Handles API logic for code smell detection
+│
+├── models/
+│   └── CodeSnippet.js             # Mongoose schema for storing code samples
+│
+├── routes/
+│   └── smellRoutes.js             # Defines REST endpoints (e.g., POST /smell)
+│
+├── services/
+│   └── smellService.js            # Talks to Python ML microservice, preprocesses input
+│
+├── middleware/
+│   ├── errorHandler.js            # Global error catcher
+│   └── logger.js                  # Custom request logger (optional)
+│
+├── utils/
+│   ├── validateCode.js            # Validates code format before processing
+│   └── parseAST.js                # Optionally analyzes code syntax tree
+│
+├── config/
+│   └── db.js                      # MongoDB connection using Mongoose
+│
+├── app.js                         # Sets up Express app, middleware, routes
+└── server.js                      # Starts the backend server (calls app.js)
