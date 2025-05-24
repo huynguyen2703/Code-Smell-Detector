@@ -1,6 +1,6 @@
 const CodeSnippet = require("../models/CodeSnippet");
 const smellServcice = require("../services/smellService");
-const util = require("../utils/util/");
+const util = require("../utils/util");
 
 
 async function createCodeSnippet(code, language, smells) {
@@ -89,7 +89,7 @@ async function analyzeCode(req, res) {
   }
 
   try {
-    const detectedSmells = await smellServcice.detectSmells(code);
+    const detectedSmells = await smellServcice.detectSmells(code, language);
     const saved = await createCodeSnippet(code, language, detectedSmells);
     res.status(201).json(saved);
   } catch (err) {
