@@ -17,7 +17,7 @@ load_dotenv()
 
 
 class GptClient(BaseModel):
-    def __init__(self, api_key, model_name="gpt-4"):
+    def __init__(self, api_key=None, model_name="gpt-4"):
         self.api_key = api_key or os.getenv("GPT_4_AUTOSMELLS_LAB_API")
         self.model = model_name
         self.models = openai.models.list().data
@@ -35,7 +35,6 @@ class GptClient(BaseModel):
             return False
         self.model = model_name
         return True
-
 
     def construct_prompt(self, code: str, language: str) -> str:
         prompt = textwrap.dedent(f"""
@@ -59,7 +58,6 @@ class GptClient(BaseModel):
         """).strip()
         return prompt
         
-
     def analyze_code(self, prompt) -> str:
         try:
             response = openai.ChatCompletion.create(
