@@ -20,7 +20,7 @@ class LlamaClient(BaseModel):
     def get_current_model(self) -> str:
         return self.model
 
-    def get_all_model(self):
+    def get_all_models(self):
         return [self.model]
 
     def set_model_name(self, model_name) -> bool:
@@ -53,7 +53,7 @@ class LlamaClient(BaseModel):
     def analyze_code(self, prompt: str) -> str:
         try:
             response = self.client.text_generation(prompt, max_new_tokens=512)
-            return response
+            return response[0].get('generated_text', '')
         except HfHubHTTPError as e:
             return f"HuggingFace Hub Error: {e}"
         except requests.exceptions.HTTPError as e:
