@@ -8,7 +8,7 @@ from typing import List, Type
 
 
 class ModelManager:
-    def __init__(self):
+    def __init__(self):        
         self.clients: dict[str, BaseModel] = {}
         self.user_registered_models: dict[str, BaseModel] = {}
         self.__register_private_models()
@@ -22,7 +22,10 @@ class ModelManager:
     def __instantiate_private_models(self) -> List[BaseModel]:
         temp_list_of_private_models: List[Type[BaseModel]] = [
             GptClient,
-            LlamaClient
+            #LlamaClient,
+            #DeepseekClient,
+            #GeminiClient,
+            #ClaudeClient,
         ]
         return [cls() for cls in temp_list_of_private_models]
 
@@ -56,3 +59,12 @@ class ModelManager:
         for user_registered_model in self.user_registered_models.keys():
             del self.clients[user_registered_model]
             del self.user_registered_models[user_registered_model]
+
+    def start_analyze(self, code: str, language: str) -> bool:
+        analysis_result_list = []
+        for model in self.clients:
+            prompt = model.construct_prompt(code, language)
+            analysis_result = model.analyze_code(prompt)
+            analysis_result_list.append(analysis_result)
+        return analysis_result_list
+
