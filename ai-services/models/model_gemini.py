@@ -1,8 +1,8 @@
-from model_base import BaseModel
+from models.model_base import BaseModel
 import os
 import textwrap
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 from google.api_core.exceptions import (
     InvalidArgument,
     NotFound,
@@ -12,19 +12,19 @@ from google.api_core.exceptions import (
 
 load_dotenv()
 
-
 class GeminiClient(BaseModel):
     def __init__(self, api_key=None, model_name="gemini-1.5-pro"):
         self.api_key = api_key or os.getenv("GEMINI_1.5_PRO_AUTOSMELLS_LAB_API")
         self.model = model_name
-        self.client = genai.Client(api_key=self.api_key)
+        genai.configure(api_key=self.api_key) 
+        self.client = genai.GenerativeModel(model_name=self.model)
 
     def get_current_model(self) -> str:
         return self.model
 
     def get_all_models(self):
         try:
-            return self.client.list_models()
+            return genai.list_models()  # ✅ updated: list_models is a top-level function
         except GoogleAPIError as e:
             return f"APIError while listing models: {e.message}"
 
@@ -36,37 +36,36 @@ class GeminiClient(BaseModel):
                 return False
             self.model = model_name
             return True
-        except Exception as e:
+        except Exception:
             return False
 
     def construct_prompt(self, code: str, language: str) -> str:
         prompt = textwrap.dedent(f"""
             You are an expert in software quality and code smell detection.
 
-            Given a code snippet written in {language}, identify all possible code smells present.
-            For each code smell, return a key-value pair in a Python dictionary format, where:
+            Given a code snippet written in {language}, identify all code smells present.
 
-            - The key is the name of the code smell (e.g., "long method", "duplicated code").
+            For each code smell, provide a JSON dictionary entry where:
+            - The key is the name of the code smell (e.g., "long parameter list").
             - The value is a brief explanation of why the smell is present and a recommended fix.
 
-            Example:
+            Respond **ONLY** with a JSON dictionary. No extra explanation.
+
+            Example output:
             {{
-                "long method": "The method exceeds 20 lines. Consider splitting it into smaller functions.",
-                "duplicated code": "Two functions perform the same logic. Consider refactoring into one."
+                "long parameter list": "The function has too many parameters (10). Consider using a data structure or object to encapsulate them.",
+                "missing return value": "The function doesn't return any value. Returning a status or object would be useful."
             }}
 
-            Now analyze the following code:
-
+            Analyze this code:
             {code}
         """).strip()
         return prompt
 
+
     def analyze_code(self, prompt: str) -> str:
         try:
-            response = self.client.models.generate_content(
-                model=self.model,
-                contents=prompt
-            )
+            response = self.client.generate_content(prompt)
             return response.text.strip()
         except InvalidArgument as e:
             return f"InvalidArgument: {e.message}"

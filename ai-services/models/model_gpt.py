@@ -1,16 +1,16 @@
 from openai import OpenAI
-from openai.error import (
+from openai import (
     AuthenticationError,
-    InvalidRequestError,
+    BadRequestError,
     RateLimitError,
     APIConnectionError,
-    ServiceUnavailableError,
     APIError
 )
+
 import os
 import textwrap
 from dotenv import load_dotenv
-from model_base import BaseModel
+from models.model_base import BaseModel
 
 load_dotenv()
 
@@ -25,11 +25,12 @@ class GptClient(BaseModel):
         return self.model
 
     def get_all_models(self):
-        return self.client.models.list()
+        return [model.id for model in self.client.models.list().data]
+
 
     def set_model_name(self, model_name) -> bool:
         models_list = self.get_all_models()
-        model_ids = [model["id"] for model in models_list["data"]]
+        model_ids = [model.id for model in models_list]
 
         if model_name not in model_ids:
             return False
@@ -42,15 +43,16 @@ class GptClient(BaseModel):
             You are an expert in software quality and code smell detection.
 
             Given a code snippet written in {language}, identify all possible code smells present.
-            For each code smell, return a key-value pair in a Python dictionary format, where:
+            Ignore formatting issue such as indentation and focus on logical smells. For each code smell, return a key-value pair in a Python dictionary format, where:
 
             - The key is the name of the code smell (e.g., "long method", "duplicated code").
-            - The value is a brief explanation of why the smell is present and a recommended fix.
+            - The value is a brief explanation of why the smell is present and a recommended fix. You should include refactored code.
 
             Example:
             {{
-                "long method": "The method exceeds 20 lines. Consider splitting it into smaller functions.",
-                "duplicated code": "Two functions perform the same logic. Consider refactoring into one."
+                "long method": "The method exceeds 20 lines. Consider splitting it into smaller functions.
+                "duplicated code": "Two functions perform the same logic. Consider refactoring into one. Refactored code:"
+                "def refactored():" 
             }}
 
             Now analyze the following code:
@@ -65,18 +67,17 @@ class GptClient(BaseModel):
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}]
             )
-            return response.choices[0].message["content"]
+            return response.choices[0].message.content
         except AuthenticationError:
             return "Authentication failed. Check your API key."
-        except InvalidRequestError as e:
-            return f"Invalid request: {e}"
+        except BadRequestError as e:
+            return f"Bad request: {e}"
         except RateLimitError:
             return "Rate limit exceeded. Try again later."
         except APIConnectionError:
             return "Connection error. Please check your network."
-        except ServiceUnavailableError:
-            return "OpenAI service is currently unavailable."
         except APIError as e:
             return f"OpenAI API error: {e}"
         except Exception as e:
             return f"Unexpected error: {e}"
+

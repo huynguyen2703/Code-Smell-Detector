@@ -1,4 +1,4 @@
-from model_base import BaseModel
+from models.model_base import BaseModel
 import os
 import textwrap 
 from dotenv import load_dotenv
@@ -30,7 +30,7 @@ class ClaudeClient(BaseModel):
         return True
 
     def construct_prompt(self, code: str, language: str) -> str:
-        prompt = textwrap.dedent(f"""
+        body = textwrap.dedent(f"""
             You are an expert in software quality and code smell detection.
 
             Given a code snippet written in {language}, identify all possible code smells present.
@@ -48,18 +48,23 @@ class ClaudeClient(BaseModel):
             Now analyze the following code:
 
             {code}
-        """).strip()
-        return prompt
+        """)
+
+        # Add the proper Human/Assistant format
+        return f"\n\nHuman: {body}\n\nAssistant:"
+
 
     def analyze_code(self, prompt: str) -> str:
         try:
             response = self.client.messages.create(
                 model=self.model,
-                messages=[{"role": "user", "content": prompt}],
                 max_tokens=1024,
-            )   
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
             return response.content[0].text
-        
+
         except RateLimitError:
             return "Rate limit exceeded. Try again later."
         except BadRequestError as e:
@@ -70,5 +75,6 @@ class ClaudeClient(BaseModel):
             return "Claude service is currently unavailable."
         except Exception as e:
             return f"Unexpected error: {e}"
-  
+
+    
 

@@ -1,14 +1,13 @@
 import textwrap
 from openai import OpenAI
-from openai.error import (
+from openai import (
     AuthenticationError,
-    InvalidRequestError,
+    BadRequestError,
     RateLimitError,
     APIConnectionError,
-    ServiceUnavailableError,
     APIError
 )
-from model_base import BaseModel
+from models.model_base import BaseModel
 import os
 from dotenv import load_dotenv
 import textwrap
@@ -17,10 +16,10 @@ load_dotenv()
 
 
 class DeepseekClient(BaseModel):
-    def __init__(self, api_key=None, model_name="deepseek-reasoner"):
+    def __init__(self, api_key=None, model_name="deepseek-r1-0528"):
         self.api_key = api_key or os.getenv("DEEPSEEK_R1_AUTOSMELLS_LAB_API")
         self.model = model_name
-        self.client = OpenAI(api_key=self.api_key)
+        self.client = OpenAI(api_key=self.api_key, base_url="https://api.lambda.ai/v1")
 
     def get_current_model(self) -> str:
         return self.model
@@ -65,17 +64,15 @@ class DeepseekClient(BaseModel):
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}]
             )
-            return response.choices[0].message["content"]
+            return response.choices[0].message.content
         except AuthenticationError:
             return "Authentication failed. Check your API key."
-        except InvalidRequestError as e:
+        except BadRequestError as e:
             return f"Invalid request: {e}"
         except RateLimitError:
             return "Rate limit exceeded. Try again later."
         except APIConnectionError:
             return "Connection error. Please check your network."
-        except ServiceUnavailableError:
-            return "OpenAI service is currently unavailable."
         except APIError as e:
             return f"OpenAI API error: {e}"
         except Exception as e:

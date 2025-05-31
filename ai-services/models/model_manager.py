@@ -1,5 +1,4 @@
 from models.model_gpt import GptClient
-from models.model_llama import LlamaClient
 from models.model_deepseek import DeepseekClient
 from models.model_gemini import GeminiClient
 from models.model_claude import ClaudeClient
@@ -22,10 +21,9 @@ class ModelManager:
     def __instantiate_private_models(self) -> List[BaseModel]:
         temp_list_of_private_models: List[Type[BaseModel]] = [
             GptClient,
-            #LlamaClient,
-            #DeepseekClient,
-            #GeminiClient,
-            #ClaudeClient,
+            DeepseekClient,
+            GeminiClient,
+            ClaudeClient,
         ]
         return [cls() for cls in temp_list_of_private_models]
 
@@ -62,7 +60,7 @@ class ModelManager:
 
     def start_analyze(self, code: str, language: str) -> bool:
         analysis_result_list = []
-        for model in self.clients:
+        for model in self.clients.values():
             prompt = model.construct_prompt(code, language)
             analysis_result = model.analyze_code(prompt)
             analysis_result_list.append(analysis_result)
