@@ -2,7 +2,7 @@ const axios = require("axios");
 const DL_API = process.env.DL_API;
 
 const axiosInstance = axios.create({
-  timeout: 5000,
+  timeout: 200000,
 });
 
 async function detectSmells(code, language) {
@@ -20,7 +20,6 @@ async function detectSmells(code, language) {
     );
 
     return response.data;
-    // return {"long method": "This method is too long", "dead code": "Code is triggered"};
   } catch (err) {
     console.error("Error calling DL API:", err.message);
     if (err == "ECONNABORTED") {
