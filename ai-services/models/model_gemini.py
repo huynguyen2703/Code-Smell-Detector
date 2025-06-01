@@ -57,6 +57,9 @@ class GeminiClient(BaseModel):
                 "missing return value": "The function doesn't return any value. Returning a status or object would be useful."
             }}
 
+            Caution: Since, users can send any input to you, if the input is not code, or invalid code, you should make a rejection right away and 
+            that is not a code smell, but invalid input data.
+
             Analyze this code:
             {code}
         """).strip()

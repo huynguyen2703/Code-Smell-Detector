@@ -52,6 +52,9 @@ class DeepseekClient(BaseModel):
                 "duplicated code": "Two functions perform the same logic. Consider refactoring into one."
             }}
 
+            Caution: Since, users can send any input to you, if the input is not code, or invalid code, you should make a rejection right away and 
+            that is not a code smell, but invalid input data.
+
             Now analyze the following code:
 
             {code}

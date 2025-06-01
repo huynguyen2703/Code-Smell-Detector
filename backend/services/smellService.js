@@ -2,7 +2,7 @@ const axios = require("axios");
 const DL_API = process.env.DL_API;
 
 const axiosInstance = axios.create({
-  timeout: 200000,
+  timeout: 500000,
 });
 
 async function detectSmells(code, language) {

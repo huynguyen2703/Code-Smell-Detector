@@ -32,7 +32,6 @@ class Synthesizer:
             {
                 "long parameter list": "The create_user function has too many parameters...",
                 "primitive obsession": "The function uses many primitives rather than encapsulated objects...",
-                "Refactored code example here": "```python\\ndef create_user(user):\\n    print('User created')\\n```"
             }
         """
 
@@ -41,24 +40,27 @@ class Synthesizer:
 
             Your job:
             - Review the opinions of multiple LLMs regarding code smells in a provided code snippet or file.
-            - Evaluate or/and combine their reasoning.
+            - Evaluate or/and combine their reasoning. Don't go overboard, just identify reasonable enough smells
             - Formulate the most accurate set of detected code smells.
             - Provide clear explanations.
-            - Then provide a properly formatted refactored version of the code as a **single multi-line string** inside a JSON field named `"Refactored code example here"`.
+            - Then provide a properly formatted refactored version of the code.
+            - Caution: you may see the models reject and say that input data is invalid, since there will be cases when users send garbage, input that is not code to the web app.
             
             Formatting Instructions:
-            - Return the refactored code wrapped in triple backticks with `python` specified (i.e., ```python).
+            - Return the refactored code formatted nicely
             - Maintain full indentation and line breaks.
             - Do NOT return the refactored code as a list of strings — instead, return it as one string that preserves formatting.
-            - Escape any inner quotes as needed to ensure valid JSON.
+            - Escape any inner quotes as needed
 
-            Format your final output strictly as a JSON object, like this:
+            Format your final output and have the refactored code should be at the end of the list
+            and should be formatted correctly (no special characters), like this:
 
-            {{
-                "code smell name": "Explanation of why it is a code smell and how to fix it.",
-                ...
-                "Refactored code example here": "```python\\ndef refactored_function():\\n    print('code is refactored')\\n```"
-            }}
+            "code smell name": "Explanation of why it is a code smell and how to fix it.",
+            ...
+            "Refactored code example here": 
+            
+                def this_function_got_refactored():
+                    ...
 
             Example LLM opinions (from GPT-4, DeepSeek R1, Gemini 1.5 Pro, Claude Sonnet 4):
 
@@ -66,7 +68,7 @@ class Synthesizer:
 
             You will receive opinions from each model respectively in this order GPT-4, Deepseek R1, Gemini 1.5 Pro, Claude Sonnet 4.
 
-            Now evaluate the following model opinions and synthesize the final, corrected JSON-formatted result:
+            Now evaluate the following model opinions and synthesize the final result:
 
             {models_opinion_list}
         """).strip()
