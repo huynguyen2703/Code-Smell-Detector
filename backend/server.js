@@ -19,12 +19,6 @@ app.use(express.json());
 // define router for this route
 app.use("/api", codeRoutes);
 
-// Basic route for testing
-app.get("/", (req, res) => {
-  // repalce with a landing page
-  res.send("Hello from the backend!");
-});
-
 
 // Start server
 const port = process.env.SERVER_PORT;

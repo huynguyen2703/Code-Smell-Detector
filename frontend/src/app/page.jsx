@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -25,9 +26,11 @@ export default function Home() {
 
       {/* Image Section */}
       <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center">
-        <img
+        <Image
           src="/lab-preview.jpg"
           alt="Lab Page Preview"
+          width={800} // adjust width
+          height={450} // adjust height to keep aspect ratio
           className="w-full max-w-2xl object-cover rounded-2xl shadow-2xl border border-gray-900 opacity-90"
         />
       </div>
