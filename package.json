@@ -1,18 +1,16 @@
 {
   "name": "code-smell-detector",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
+    "next": "^13.4.7",          
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "axios": "^1.9.0",
-    "axis": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^5.1.0"
   }
