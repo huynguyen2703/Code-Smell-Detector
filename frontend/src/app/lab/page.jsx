@@ -38,7 +38,7 @@ export default function LabPage() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:5050/api/code-smell-detector/analyze",
+        `${process.env.NEXT_PUBLIC_API_URL}/code-smell-detector/analyze`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
