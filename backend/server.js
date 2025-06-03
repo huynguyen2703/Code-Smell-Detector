@@ -19,6 +19,9 @@ app.use(express.json());
 // define router for this route
 app.use("/api", codeRoutes);
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Start server
 const port = process.env.SERVER_PORT;
