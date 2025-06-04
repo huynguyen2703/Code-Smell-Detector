@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const connectMongo = require("../backend/config/db");
-const codeRoutes = require("../backend/routes/codeRoutes");
+const connectMongo = require("./config/db");
+const codeRoutes = require("./routes/codeRoutes");
 
 // initialize app + connect DB
 const app = express();
@@ -25,6 +25,6 @@ app.get('/health', (req, res) => {
 
 // Start server
 const port = process.env.SERVER_PORT;
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on port ${port}`);
 });
